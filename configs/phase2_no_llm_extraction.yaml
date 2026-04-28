@@ -1,0 +1,51 @@
+experiment:
+  name: phase2_no_llm_extraction
+  seed: 42
+
+dataset:
+  name: locomo
+  path: data/raw/locomo10.json
+  split: all
+
+embedding:
+  provider: sentence_transformers
+  model_name: BAAI/bge-small-en-v1.5
+  batch_size: 64
+  normalize_embeddings: true
+  cache_dir: data/processed/embedding_cache
+
+phase2:
+  # Ablation: disable LLM extraction (use rule-based)
+  enable_llm_extraction: false
+  candidate_detector_threshold: 0.35
+
+  # Ablation: disable contradiction LLM (similarity only)
+  enable_contradiction_llm: false
+  contradiction_similarity_threshold: 0.85
+
+  # Retrieval pipeline
+  enable_reranker: false
+  enable_compressed_label_search: true
+  enable_graph_traversal_worker: true
+  enable_forgotten_tier_fallback: true
+
+  # Lifecycle
+  storage_cap: 500
+  transition_trigger_pct: 0.90
+  enable_compression_llm: false
+
+  # Caching
+  cache_dir: data/processed/phase2_cache
+
+generation:
+  enabled: false  # Retrieval-only for ablation
+
+evaluation:
+  compute_f1: false
+  compute_exact_match: false
+  compute_evidence_recall: true
+  compute_latency: true
+  compute_token_usage: false
+
+output:
+  dir: results
